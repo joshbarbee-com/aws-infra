@@ -1,0 +1,40 @@
+name: Deploy Terrao
+on:
+  push:
+    branches:
+      - main
+env:
+  AWS_REGION : "AWS-REGION"
+  ROLE : "arn:aws:iam::902448871458:role/github-cicd"
+# permission can be added at job level or workflow level
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      # Pulls the latest version of your code from the GitHub repository
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      # Installs Terraform on the GitHub runner
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+      # Configures your AWS access by using OIDC
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: ${{ env.ROLE }}
+          role-session-name: terraform-cicd-session
+          aws-region: ${{ env.AWS_REGION }}
+      # Initialize terraform
+      - name: Initialize Terraform
+        run: terraform init
+
+      # Execute the terraform plan
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Deploy terraform changes
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
