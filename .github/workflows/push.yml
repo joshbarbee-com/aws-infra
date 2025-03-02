@@ -4,7 +4,7 @@ on:
     branches:
       - main
 env:
-  AWS_REGION : "AWS-REGION"
+  AWS_REGION : "us-east-2"
   ROLE : "arn:aws:iam::902448871458:role/github-cicd"
 # permission can be added at job level or workflow level
 permissions:
