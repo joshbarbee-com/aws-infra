@@ -1,4 +1,4 @@
-name: Deploy Terrao
+name: Deploy Terraform
 on:
   push:
     branches:
