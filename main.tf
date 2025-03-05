@@ -21,7 +21,7 @@ resource "aws_acm_certificate" "acm-cert" {
 
 resource "aws_acm_certificate_validation" "acm-cert-validation" {
     certificate_arn = aws_acm_certificate.acm-cert.arn
-    validation_record_fqdns = [for record in awsaws_route53_record.r53-cname-record-acm : record.fqdn]
+    validation_record_fqdns = [for record in aws_route53_record.r53-cname-record-acm : record.fqdn]
 }
 
 resource "aws_route53_zone" "r53-hosted-zone" {
