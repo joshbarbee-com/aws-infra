@@ -26,6 +26,7 @@ resource "aws_route53_record" "r53-ns-record" {
         "ns-1916.awsdns-47.co.uk.",
         "ns-1216.awsdns-24.org."
     ]
+    allow_overwrite = true
 }
 
 resource "aws_route53_record" "r53-soa-record" {
@@ -34,6 +35,7 @@ resource "aws_route53_record" "r53-soa-record" {
     type = "SOA"
     ttl = 900
     records = [ "ns-1002.awsdns-61.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400" ]
+    allow_overwrite = true
 }
 
 resource "aws_route53_record" "r53-txt-record" {
@@ -42,6 +44,7 @@ resource "aws_route53_record" "r53-txt-record" {
     type = "TXT"
     ttl = 300
     records = [ "google-site-verification=lJ8vU8pelCEFGX_5hKoJL19iJ_N4EH3bJpLwo3CR594" ]
+    allow_overwrite = true
 }
 
 resource "aws_route53_record" "r53-cname-record-acm" {
@@ -67,6 +70,7 @@ resource "aws_route53_record" "r53-cname-record-dc" {
     type = "CNAME"
     ttl = 360
     records = [ "_domainconnect.gd.domaincontrol.com." ]
+    allow_overwrite = true
 }
 
 resource "aws_route53_record" "r53-cname-record-www" {
@@ -75,4 +79,5 @@ resource "aws_route53_record" "r53-cname-record-www" {
     type = "CNAME"
     ttl = 360
     records = [ "joshbarbee.com." ]
+    allow_overwrite = true
 }

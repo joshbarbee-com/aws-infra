@@ -9,13 +9,13 @@ data "aws_iam_policy_document" "github-cicd-trust-policy" {
       actions = [ "sts:AssumeRoleWithWebIdentity"]
       effect = "Allow"
       principals {
-        type = "oidc-provider"
+        type = "Federated"
         identifiers = ["arn:aws:iam::902448871458:oidc-provider/token.actions.githubusercontent.com"]
       }
       condition {
         test = "StringEquals"
         variable = "token.actions.githubusercontent.com:sub"
-        values = ["repo:joshbarbee/aws-infra:ref:refs/heads/main", "sts.amazonaws.com"]
+        values = ["repo:joshbarbee/aws-infra:ref:refs/heads/main"]
       }
     }
 }
@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "terraform-acm" {
             "acm:GetCertificate",
             "acm:DeleteCertificate"
         ]
-        resources = [aws_acm_certificate_validation.acm-cert.arn]
+        resources = [aws_acm_certificate.acm-cert.arn]
     }
 }
 
