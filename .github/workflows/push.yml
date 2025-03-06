@@ -30,11 +30,21 @@ jobs:
       # Initialize terraform
       - name: Initialize Terraform
         run: terraform init
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
 
       # Execute the terraform plan
       - name: Terraform Plan
         run: terraform plan
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          TF_VAR_email: ${{ secrets.TF_VAR_email }}
+          TF_VAR_phone_number: ${{ secrets.TF_VAR_phone_number }}
 
       # Deploy terraform changes
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          TF_VAR_email: ${{ secrets.TF_VAR_email }}
+          TF_VAR_phone_number: ${{ secrets.TF_VAR_phone_number }}
