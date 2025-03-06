@@ -88,14 +88,19 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
     }
 }
 
+data "aws_iam_policy_document" "terraform-apigw" {
+    statement {
+        sid = "APIGatewayReadCreateDestroy"
+        effect = "Allow"
+        actions = [
+        ]
+        resources = [ aws_apigatewayv2_api.apigw-aws-redirect.arn ]
+    }
+}
+
 resource "aws_iam_policy" "terraform-iam-roles" {
     name   = "terraform-iam-roles"
     policy = data.aws_iam_policy_document.terraform-iam-roles.json
-}
-
-resource "aws_iam_role_policy_attachment" "github-cicd-iam-roles-attach" {
-    role       = aws_iam_role.github-cicd.name
-    policy_arn = aws_iam_policy.terraform-iam-roles.arn
 }
 
 resource "aws_iam_policy" "terraform-acm" {
@@ -113,6 +118,16 @@ resource "aws_iam_policy" "terraform-infra-s3" {
     policy = data.aws_iam_policy_document.terraform-infra-s3.json
 }
 
+resource "aws_iam_policy" "terraform-apigw" {
+    name   = "terraform-apigw"
+    policy = data.aws_iam_policy_document.terraform-apigw.json
+}
+
+resource "aws_iam_role_policy_attachment" "github-cicd-iam-roles-attach" {
+    role       = aws_iam_role.github-cicd.name
+    policy_arn = aws_iam_policy.terraform-iam-roles.arn
+}
+
 resource "aws_iam_role_policy_attachment" "github-cicd-infra-s3-attach" {
     role       = aws_iam_role.github-cicd.name
     policy_arn = aws_iam_policy.terraform-infra-s3.arn
@@ -126,4 +141,9 @@ resource "aws_iam_role_policy_attachment" "github-cicd-route53-attach" {
 resource "aws_iam_role_policy_attachment" "github-cicd-acm-attach" {
     role       = aws_iam_role.github-cicd.name
     policy_arn = aws_iam_policy.terraform-acm.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github-cicd-apigw-attach" {
+    role       = aws_iam_role.github-cicd.name
+    policy_arn = aws_iam_policy.terraform-apigw.arn
 }

@@ -81,3 +81,12 @@ resource "aws_route53_record" "r53-cname-record-www" {
     records = [ "joshbarbee.com." ]
     allow_overwrite = true
 }
+
+resource "aws_route53_record" "r53-cname-record-aws" {
+    zone_id = aws_route53_record.r53-ns-record.zone_id
+    name = "aws.joshbarbee.com"
+    type = "CNAME"
+    ttl = 360
+    records = [ aws_apigatewayv2_domain_name.apigw-aws-redirect-domain.regional_domain_name ]
+    allow_overwrite = true
+}

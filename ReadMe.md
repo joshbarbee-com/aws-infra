@@ -12,68 +12,20 @@ before this script is used. Three things must be done:
     1. Create a bucket within AWS under any name.
     2. Use default settings when creating the bucket, but enable bucket versioning. Enable any other settings as needed by organizational requirements.
 
-2. Github is allowed to interact with AWS via OIDC.
-    1. Within IAM, navigate to Identity Providers
-    2. Add a new provider using OpenID Connect
-        - The provider value should be `token.actions.githubusercontent.com`
-        - The provider audience should be `sts.amazonaws.com`
-    3. Create a new role for CICD within IAM
-        - Use a custom trust policy, such as the below, making sure to replace anyything in `{*****}`:
-            ```
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {
-                        "Federated": "arn:aws:iam::{account_id}:oidc-provider/token.actions.githubusercontent.com"
-                    },
-                    "Action": "sts:AssumeRoleWithWebIdentity",
-                    "Condition": {
-                        "StringEquals": {
-                            "token.actions.githubusercontent.com:sub": "repo:{github_org}/{github_repo}:ref:refs/heads/{github_branch}",
-                            "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-                        }
-                    }
-                }
-                ]
-            }
-            ```
-            This only grants the ability to assume the role to the OIDC Github CICD credential. The role uses temporary credentials for the length of the session, so risk of credential leakage is mitigated.
-    4. Finish creating the role. We will attach a policy, so do not add any now.
-    5. Create a new policy with the following information:
-        ```
-        {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "ListBucket",
-                "Effect": "Allow",
-                "Action": [
-                    "s3:ListBucket"
-                ],
-                "Resource": [
-                    "arn:aws:s3:::{bucket_name}"
-                ]
-            },
-            {
-                "Sid": "GetObject",
-                "Effect": "Allow",
-                "Action": [
-                    "s3:GetObject",
-                    "s3:PutObject",
-                    "s3:DeleteObject"
-                ],
-                "Resource": [
-                    "arn:aws:s3:::{bucket_name}/*"
-                ]
-            }
-        ]
-        }
-        ```
-        This grants the Terraform execution role the ability to list objects in the S3 state bucket, as well as read, write, and delete those objects. This policy only allows access to the bucket that you created in step 1. Additional granular access can be configured for each of the `terraform.tfstate` and any lock files terraform generates, however, only Terraform should ever be reading / writing to this bucket, so it may be not worth the time, since the security is already sufficient.
+2. Create a temporary user in AWS to initially provision terraform locally.
+    1. Attach the AdministratorAccess policy to the user
+    2. Set your AWS profile with the access key and secret of the temporary user
+    3. Run `terraform plan` and `terraform apply` locally. Do not worry about locally-generated lock files.
+    4. Delete the temporary user once the apply is finished.
+        
 3. Update the Github workflow, by configuring  the `.github/workflows/push.yml` file
     1. Update the AWS region with the region you are deploying to
     2. Update the role with the name of the role you created in AWS
 
 Note that from here, the created Terraform role must still be updated to have the ability to modify AWS resources as needed.
+
+## Notes
+Besides the manual steps above for connecting Terraform and Github CI/CD to AWS, you may also want to setup IAM Identity Center to configure SSO + MFA for user accounts. Unfortunately, this functionality cannot be scripted 
+entirely in Terraform, and thus must be manually setup. This is not required if the root account is used for user access (not recommended).
+
+This also means that management of all user / group policies cannot be done via this repo. For reference, in Identity Center, I have one user under a `dev` group which is given `SystemAdministrator` permissions. Feel free to adjust the permission set.
