@@ -82,7 +82,8 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
             "iam:UpdatePolicy",
             "iam:PassPolicy",
             "iam:GetPolicyVersion",
-            "iam:ListAttachedRolePolicies"
+            "iam:ListAttachedRolePolicies",
+            "iam:AttachRolePolicy",
         ]
         resources = ["*"]
     }
