@@ -36,33 +36,13 @@ data "aws_iam_policy_document" "terraform-infra-s3" {
     }
 }
 
-data "aws_iam_policy_document" "terraform-route53-hostedzone" {
+data "aws_iam_policy_document" "terraform-route53" {
     statement {
-        sid = "Route53HostedZone"
+        sid = "Route53"
         effect = "Allow"
         actions = [
-            "route53:CreateHostedZone",
-            "route53:UpdateHostedZoneComment",
-            "route53:GetHostedZone",
-            "route53:ListHostedZones",
-            "route53:DeleteHostedZone",
-            "route53:ChangeResourceRecordSets",
-            "route53:ListResourceRecordSets",
-            "route53:GetHostedZoneCount",
-            "route53:ListHostedZonesByName"
-        ]
-        resources = [ aws_route53_zone.r53-hosted-zone.arn ]
-    }
-}
-
-data "aws_iam_policy_document" "terraform-route53-records" {
-    statement {
-        sid = "Route53Records"
-        effect = "Allow"
-        actions = [
-            "route53:ChangeResourceRecordSets",
-            "route53:ListResourceRecordSets",
-            "route53:GetChange"
+            "route53:*",
+            "route53domains:*"
         ]
         resources = [ aws_route53_zone.r53-hosted-zone.arn ]
     }
@@ -77,7 +57,8 @@ data "aws_iam_policy_document" "terraform-acm" {
             "acm:DescribeCertificate",
             "acm:ListCertificates",
             "acm:GetCertificate",
-            "acm:DeleteCertificate"
+            "acm:DeleteCertificate",
+            "acm:ListTagsForCertificate"
         ]
         resources = [aws_acm_certificate.acm-cert.arn]
     }
@@ -93,7 +74,13 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
             "iam:GetRole",
             "iam:ListRoles",
             "iam:UpdateRole",
-            "iam:PassRole"
+            "iam:PassRole",
+            "iam:CreatePolicy",
+            "iam:DeletePolicy",
+            "iam:GetPolicy",
+            "iam:ListRolePolicies",
+            "iam:UpdatePolicy",
+            "iam:PassPolicy",
         ]
         resources = ["*"]
     }
@@ -114,14 +101,9 @@ resource "aws_iam_policy" "terraform-acm" {
     policy = data.aws_iam_policy_document.terraform-acm.json
 }
 
-resource "aws_iam_policy" "terraform-route53-records" {
-    name   = "terraform-route53-records"
-    policy = data.aws_iam_policy_document.terraform-route53-records.json
-}
-
-resource "aws_iam_policy" "terraform-route53-hostedzone" {
-    name   = "terraform-route53-hostedzone"
-    policy = data.aws_iam_policy_document.terraform-route53-hostedzone.json
+resource "aws_iam_policy" "terraform-route53" {
+    name   = "terraform-route53"
+    policy = data.aws_iam_policy_document.terraform-route53.json
 }
 
 resource "aws_iam_policy" "terraform-infra-s3" {
@@ -134,14 +116,9 @@ resource "aws_iam_role_policy_attachment" "github-cicd-infra-s3-attach" {
     policy_arn = aws_iam_policy.terraform-infra-s3.arn
 }
 
-resource "aws_iam_role_policy_attachment" "github-cicd-route53-hostedzone-attach" {
+resource "aws_iam_role_policy_attachment" "github-cicd-route53-attach" {
     role       = aws_iam_role.github-cicd.name
-    policy_arn = aws_iam_policy.terraform-route53-hostedzone.arn
-}
-
-resource "aws_iam_role_policy_attachment" "github-cicd-route53-records-attach" {
-    role       = aws_iam_role.github-cicd.name
-    policy_arn = aws_iam_policy.terraform-route53-records.arn
+    policy_arn = aws_iam_policy.terraform-route53.arn
 }
 
 resource "aws_iam_role_policy_attachment" "github-cicd-acm-attach" {
