@@ -4,7 +4,7 @@ resource "aws_apigatewayv2_api" "apigw-aws-redirect" {
 }
 
 resource "aws_apigatewayv2_domain_name" "apigw-aws-redirect-domain" {
-  domain_name = "aws.joshbarbee.com"
+  domain_name = aws_acm_certificate.acm-cert-aws.domain_name
 
   domain_name_configuration {
     certificate_arn = aws_acm_certificate.acm-cert.arn
