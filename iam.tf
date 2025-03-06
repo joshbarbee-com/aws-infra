@@ -90,12 +90,12 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
 
 data "aws_iam_policy_document" "terraform-apigw" {
     statement {
-        sid = "APIGatewayReadCreateDestroy"
+        sid = "APIGateway"
         effect = "Allow"
         actions = [
             "apigateway:POST"
         ]
-        resources = [ aws_apigatewayv2_api.apigw-aws-redirect.arn ]
+        resources = [ "arn:aws:apigateway:us-east-2::/*" ]
     }
 }
 
