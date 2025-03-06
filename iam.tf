@@ -95,7 +95,11 @@ data "aws_iam_policy_document" "terraform-apigw" {
         sid = "APIGateway"
         effect = "Allow"
         actions = [
-            "apigateway:POST"
+            "apigateway:POST",
+            "apigateway:GET",
+            "apigateway:PUT",
+            "apigateway:DELETE",
+            "apigateway:PATCH",
         ]
         resources = [ "arn:aws:apigateway:us-east-2::/*" ]
     }
