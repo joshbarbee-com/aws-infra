@@ -93,6 +93,7 @@ data "aws_iam_policy_document" "terraform-apigw" {
         sid = "APIGatewayReadCreateDestroy"
         effect = "Allow"
         actions = [
+            "apigateway:POST"
         ]
         resources = [ aws_apigatewayv2_api.apigw-aws-redirect.arn ]
     }
