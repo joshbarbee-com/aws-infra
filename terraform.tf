@@ -25,14 +25,14 @@ data "aws_iam_policy_document" "terraform-infra-s3" {
         sid = "ListBucket"
         effect = "Allow"
         actions = ["s3:ListBucket"]
-        resources = ["arn:aws:s3:::${var.state_bucket}"]
+        resources = ["arn:aws:s3:::*"]
     }
 
     statement {
         sid = "GetObject"
         effect = "Allow"
         actions = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
-        resources = ["arn:aws:s3:::${var.state_bucket}/*"]
+        resources = ["arn:aws:s3:::*/*"]
     }
 }
 
@@ -82,17 +82,6 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
             "iam:ListPolicyVersions"
         ]
         resources = ["*"]
-    }
-}
-
-data "aws_iam_policy_document" "terraform-apigw" {
-    statement {
-        sid = "APIGateway"
-        effect = "Allow"
-        actions = [
-            "apigateway:*",
-        ]
-        resources = [ "arn:aws:apigateway:${var.region}::/*" ]
     }
 }
 
