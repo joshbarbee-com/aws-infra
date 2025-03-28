@@ -7,4 +7,6 @@ resource "aws_s3_bucket" "terraform_state" {
         Name        = "terraform-state-${each.key}"
         Environment = var.environment
     }
+
+    depends_on = [ aws_iam_policy.terraform-infra-s3 ]
 }
