@@ -53,12 +53,7 @@ data "aws_iam_policy_document" "terraform-acm" {
         sid = "ACMRequestCertificate"
         effect = "Allow"
         actions = [
-            "acm:RequestCertificate",
-            "acm:DescribeCertificate",
-            "acm:ListCertificates",
-            "acm:GetCertificate",
-            "acm:DeleteCertificate",
-            "acm:ListTagsForCertificate"
+            "acm:*",
         ]
         resources = [aws_acm_certificate.acm-cert.arn]
     }
@@ -95,11 +90,7 @@ data "aws_iam_policy_document" "terraform-apigw" {
         sid = "APIGateway"
         effect = "Allow"
         actions = [
-            "apigateway:POST",
-            "apigateway:GET",
-            "apigateway:PUT",
-            "apigateway:DELETE",
-            "apigateway:PATCH",
+            "apigateway:*",
         ]
         resources = [ "arn:aws:apigateway:${var.region}::/*" ]
     }
@@ -110,18 +101,7 @@ data "aws_iam_policy_document" "terraform-cloudwatch" {
         sid = "CloudWatch"
         effect = "Allow"
         actions = [
-            "cloudwatch:PutMetricData",
-            "cloudwatch:GetMetricData",
-            "cloudwatch:GetMetricStatistics",
-            "cloudwatch:ListMetrics",
-            "cloudwatch:DescribeAlarms",
-            "cloudwatch:PutMetricAlarm",
-            "cloudwatch:DeleteAlarms",
-            "cloudwatch:DescribeAlarmHistory",
-            "cloudwatch:EnableAlarmActions",
-            "cloudwatch:DisableAlarmActions",
-            "cloudwatch:SetAlarmState",
-            "cloudwatch:GetMetricWidgetImage"
+            "cloudwatch:*",
         ]
         resources = ["*"]
     }
@@ -132,20 +112,7 @@ data "aws_iam_policy_document" "terraform-sns" {
         sid = "SNS"
         effect = "Allow"
         actions = [
-            "sns:Publish",
-            "sns:Subscribe",
-            "sns:Unsubscribe",
-            "sns:ListSubscriptions",
-            "sns:ListSubscriptionsByTopic",
-            "sns:ListTopics",
-            "sns:CreateTopic",
-            "sns:DeleteTopic",
-            "sns:SetTopicAttributes",
-            "sns:GetTopicAttributes",
-            "sns:ConfirmSubscription",
-            "sns:ListTagsForResource",
-            "sns:TagResource",
-            "sns:UntagResource"
+            "sns:*",
         ]
         resources = ["*"]
     }
