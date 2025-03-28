@@ -1,5 +1,5 @@
-resource "aws_sns_topic" "alerts" {
-    name = "alerts"
+resource "aws_sns_topic" "global-alerts" {
+    name = "global-alerts"
 }
 
 resource "aws_sns_topic_subscription" "email_alerts" {

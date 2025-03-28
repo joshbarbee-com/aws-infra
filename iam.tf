@@ -105,6 +105,52 @@ data "aws_iam_policy_document" "terraform-apigw" {
     }
 }
 
+data "aws_iam_policy_document" "terraform-cloudwatch" {
+    statement {
+        sid = "CloudWatch"
+        effect = "Allow"
+        actions = [
+            "cloudwatch:PutMetricData",
+            "cloudwatch:GetMetricData",
+            "cloudwatch:GetMetricStatistics",
+            "cloudwatch:ListMetrics",
+            "cloudwatch:DescribeAlarms",
+            "cloudwatch:PutMetricAlarm",
+            "cloudwatch:DeleteAlarms",
+            "cloudwatch:DescribeAlarmHistory",
+            "cloudwatch:EnableAlarmActions",
+            "cloudwatch:DisableAlarmActions",
+            "cloudwatch:SetAlarmState",
+            "cloudwatch:GetMetricWidgetImage"
+        ]
+        resources = ["*"]
+    }
+}
+
+data "aws_iam_policy_document" "terraform-sns" {
+    statement {
+        sid = "SNS"
+        effect = "Allow"
+        actions = [
+            "sns:Publish",
+            "sns:Subscribe",
+            "sns:Unsubscribe",
+            "sns:ListSubscriptions",
+            "sns:ListSubscriptionsByTopic",
+            "sns:ListTopics",
+            "sns:CreateTopic",
+            "sns:DeleteTopic",
+            "sns:SetTopicAttributes",
+            "sns:GetTopicAttributes",
+            "sns:ConfirmSubscription",
+            "sns:ListTagsForResource",
+            "sns:TagResource",
+            "sns:UntagResource"
+        ]
+        resources = ["*"]
+    }
+}
+
 resource "aws_iam_policy" "terraform-iam-roles" {
     name   = "terraform-iam-roles"
     policy = data.aws_iam_policy_document.terraform-iam-roles.json
@@ -125,9 +171,9 @@ resource "aws_iam_policy" "terraform-infra-s3" {
     policy = data.aws_iam_policy_document.terraform-infra-s3.json
 }
 
-resource "aws_iam_policy" "terraform-apigw" {
-    name   = "terraform-apigw"
-    policy = data.aws_iam_policy_document.terraform-apigw.json
+resource "aws_iam_policy" "terraform-sns" {
+    name   = "terraform-sns"
+    policy = data.aws_iam_policy_document.terraform-sns.json
 }
 
 resource "aws_iam_role_policy_attachment" "github-cicd-iam-roles-attach" {
@@ -150,91 +196,7 @@ resource "aws_iam_role_policy_attachment" "github-cicd-acm-attach" {
     policy_arn = aws_iam_policy.terraform-acm.arn
 }
 
-resource "aws_iam_role_policy_attachment" "github-cicd-apigw-attach" {
+resource "aws_iam_role_policy_attachment" "github-cicd-sns-attach" {
     role       = aws_iam_role.github-cicd.name
-    policy_arn = aws_iam_policy.terraform-apigw.arn
-}
-
-data "aws_iam_policy_document" "apigw-cloudwatchtrust-policy" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["apigateway.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "apigw-cloudwatch-role" {
-    name               = "apigw-cloudwatch-role"
-    assume_role_policy = data.aws_iam_policy_document.apigw-cloudwatchtrust-policy.json
-}
-
-data "aws_iam_policy_document" "apigw-cloudwatch-policy" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents",
-      "logs:GetLogEvents",
-      "logs:FilterLogEvents",
-    ]
-
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_policy" "apigw-cloudwatch-policy" {
-  name   = "apigw-cloudwatch-policy"
-  policy = data.aws_iam_policy_document.apigw-cloudwatch-policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "apigw-cloudwatch-attach" {
-  role       = aws_iam_role.apigw-cloudwatch-role.name
-  policy_arn = aws_iam_policy.apigw-cloudwatch-policy.arn
-}
-
-resource "aws_iam_role" "cloudwatch-sns-role" {
-    name               = "cloudwatch-sns-role"
-    assume_role_policy = data.aws_iam_policy_document.cloudwatch-sns-trust-policy.json
-}
-
-data "aws_iam_policy_document" "cloudwatch-sns-trust-policy" {
-    statement {
-        effect = "Allow"
-
-        principals {
-            type        = "Service"
-            identifiers = ["cloudwatch.amazonaws.com"]
-        }
-    }
-}
-
-data "aws_iam_policy_document" "cloudwatch-sns-policy" {
-    statement {
-        effect = "Allow"
-
-        actions = [
-            "sns:Publish"
-        ]
-
-        resources = ["arn:aws:sns:${var.region}:${var.account_id}:${aws_sns_topic.alerts.name}"]
-    }
-}
-
-resource "aws_iam_policy" "cloudwatch-sns-policy" {
-    name   = "apigw-cloudwatch-sns-policy"
-    policy = data.aws_iam_policy_document.cloudwatch-sns-policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "apigw-cloudwatch-sns-attach" {
-    role       = aws_iam_role.cloudwatch-sns-role.name
-    policy_arn = aws_iam_policy.cloudwatch-sns-policy.arn
+    policy_arn = aws_iam_policy.terraform-sns.arn
 }

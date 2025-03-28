@@ -88,15 +88,3 @@ resource "aws_route53_record" "r53-cname-record-www" {
     records = [ "${var.domain_name}." ]
     allow_overwrite = true
 }
-
-resource "aws_route53_record" "r53-a-record-aws" {
-    zone_id = aws_route53_zone.r53-hosted-zone.zone_id
-    name    = aws_acm_certificate.acm-cert-aws.domain_name
-    type    = "A"
-
-    alias {
-        name                   = aws_apigatewayv2_domain_name.apigw-aws-redirect-domain.domain_name_configuration[0].target_domain_name
-        zone_id                = aws_apigatewayv2_domain_name.apigw-aws-redirect-domain.domain_name_configuration[0].hosted_zone_id
-        evaluate_target_health = false
-    }
-}
