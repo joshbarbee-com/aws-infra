@@ -31,7 +31,7 @@ variable "account_id" {
 variable "github_org" {
     description = "The GitHub organization"
     type        = string
-    default     = "joshbarbee" 
+    default     = "joshbarbee-com" 
 }
 
 variable "github_repo" {
