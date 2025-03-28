@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "provisioner-trust-policy" {
         test = "StringEquals"
         variable = "token.actions.githubusercontent.com:sub"
         values = [
-          for repo in jsondecode(file("./repos.json")) : "repo:${var.github_org}/${repo.repo_name}:ref:refs/heads/*"
+          for repo in jsondecode(file("./repos.json")) : "repo:${var.github_org}/${repo.repo_name}:ref:refs/heads/main"
         ]
       }
     }
