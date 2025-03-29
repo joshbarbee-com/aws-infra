@@ -33,14 +33,14 @@ jobs:
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
 
-      # Execute the terraform plan
-      - name: Terraform Plan
-        run: terraform plan
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          TF_VAR_email: ${{ secrets.TF_VAR_EMAIL }}
-          TF_VAR_phone_number: ${{ secrets.TF_VAR_PHONE_NUMBER }}
-          TF_VAR_ENVIRONMENT: dev
+      # # Execute the terraform plan
+      # - name: Terraform Plan
+      #   run: terraform plan
+      #   env:
+      #     AWS_REGION: ${{ env.AWS_REGION }}
+      #     TF_VAR_email: ${{ secrets.TF_VAR_EMAIL }}
+      #     TF_VAR_phone_number: ${{ secrets.TF_VAR_PHONE_NUMBER }}
+      #     TF_VAR_ENVIRONMENT: dev
 
       # Deploy terraform changes
       - name: Terraform Apply
