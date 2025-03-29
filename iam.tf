@@ -208,12 +208,17 @@ data "aws_iam_policy_document" "provisioner-iam-roles" {
 
 data "aws_iam_policy_document" "provisioner-s3" {
     statement {
-        sid = "ProvisionerS3"
+        sid = "ProvisionerS3Bucket"
         effect = "Allow"
-        actions = [
-            "s3:*",
-        ]
+        actions = ["s3:*"]
         resources = ["arn:aws:s3:::*"]
+    }
+
+    statement {
+        sid = "ProvisionerS3Object"
+        effect = "Allow"
+        actions = ["s3:*"]
+        resources = ["arn:aws:s3:::*/*"]
     }
 }
 
