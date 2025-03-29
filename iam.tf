@@ -64,22 +64,7 @@ data "aws_iam_policy_document" "terraform-iam-roles" {
         sid = "IAMRoles"
         effect = "Allow"
         actions = [
-            "iam:CreateRole",
-            "iam:DeleteRole",
-            "iam:GetRole",
-            "iam:ListRoles",
-            "iam:UpdateRole",
-            "iam:PassRole",
-            "iam:CreatePolicy",
-            "iam:DeletePolicy",
-            "iam:GetPolicy",
-            "iam:ListRolePolicies",
-            "iam:UpdatePolicy",
-            "iam:PassPolicy",
-            "iam:GetPolicyVersion",
-            "iam:ListAttachedRolePolicies",
-            "iam:AttachRolePolicy",
-            "iam:ListPolicyVersions"
+            "iam:*",
         ]
         resources = ["*"]
     }
@@ -200,7 +185,8 @@ data "aws_iam_policy_document" "provisioner-iam-roles" {
             "iam:GetPolicyVersion",
             "iam:ListAttachedRolePolicies",
             "iam:AttachRolePolicy",
-            "iam:ListPolicyVersions"
+            "iam:ListPolicyVersions",
+            "iam:CreatePolicyVersion",
         ]
         resources = ["*"]
     }
