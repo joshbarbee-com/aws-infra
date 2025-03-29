@@ -197,7 +197,7 @@ data "aws_iam_policy_document" "provisioner-s3" {
         sid = "ProvisionerS3Bucket"
         effect = "Allow"
         actions = [
-            for repo in jsondecode(file("./buckets.json")) : "arn:aws:s3:::${repo.repo_name}"
+            for repo in jsondecode(file("./repos.json")) : "arn:aws:s3:::${repo.repo_name}"
         ]
     }
 
@@ -206,7 +206,7 @@ data "aws_iam_policy_document" "provisioner-s3" {
         effect = "Allow"
         actions = ["s3:*"]
         resources = [
-            for repo in jsondecode(file("./buckets.json")) : "arn:aws:s3:::${repo.repo_name}/*"
+            for repo in jsondecode(file("./repos.json")) : "arn:aws:s3:::${repo.repo_name}/*"
         ]
     }
 }
