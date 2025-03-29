@@ -196,15 +196,18 @@ data "aws_iam_policy_document" "provisioner-s3" {
     statement {
         sid = "ProvisionerS3Bucket"
         effect = "Allow"
-        actions = ["s3:*"]
-        resources = ["arn:aws:s3:::*"]
+        actions = [
+            for repo in jsondecode(file("./buckets.json")) : "arn:aws:s3:::${repo.repo_name}"
+        ]
     }
 
     statement {
         sid = "ProvisionerS3Object"
         effect = "Allow"
         actions = ["s3:*"]
-        resources = ["arn:aws:s3:::*/*"]
+        resources = [
+            for repo in jsondecode(file("./buckets.json")) : "arn:aws:s3:::${repo.repo_name}/*"
+        ]
     }
 }
 
@@ -216,4 +219,14 @@ resource "aws_iam_policy" "provisioner-iam-roles" {
 resource "aws_iam_policy" "provisioner-s3" {
     name   = "provisioner-s3"
     policy = data.aws_iam_policy_document.provisioner-s3.json
+}
+
+resource "aws_iam_role_policy_attachment" "provisioner-iam-roles-attach" {
+    role       = aws_iam_role.provisioner.name
+    policy_arn = aws_iam_policy.provisioner-iam-roles.arn
+}
+
+resource "aws_iam_role_policy_attachment" "provisioner-s3-attach" {
+    role       = aws_iam_role.provisioner.name
+    policy_arn = aws_iam_policy.provisioner-s3.arn
 }
