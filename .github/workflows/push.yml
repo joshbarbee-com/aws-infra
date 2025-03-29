@@ -12,6 +12,7 @@ permissions:
   contents: read    # This is required for actions/checkout
 jobs:
   terraform:
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       # Pulls the latest version of your code from the GitHub repository

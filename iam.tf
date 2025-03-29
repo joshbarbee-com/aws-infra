@@ -196,7 +196,8 @@ data "aws_iam_policy_document" "provisioner-s3" {
     statement {
         sid = "ProvisionerS3Bucket"
         effect = "Allow"
-        actions = [
+        actions = ["s3:*"]
+        resources = [
             for repo in jsondecode(file("./repos.json")) : "arn:aws:s3:::${repo.repo_name}"
         ]
     }
